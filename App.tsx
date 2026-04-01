@@ -34,8 +34,8 @@ const OBJECTS = [
   { emoji: "🥕", color: "Orange" },
 ];
 
-function pickRandom<T>(items: T[], avoid?: T): T {
-  if (items.length === 0) return avoid as T;
+function pickRandom(items, avoid) {
+  if (items.length === 0) return undefined;
   if (items.length === 1) return items[0];
   let choice = items[Math.floor(Math.random() * items.length)];
   while (avoid !== undefined && choice === avoid) {
@@ -44,7 +44,7 @@ function pickRandom<T>(items: T[], avoid?: T): T {
   return choice;
 }
 
-const styles: Record<string, React.CSSProperties> = {
+const styles = {
   page: {
     minHeight: "100vh",
     display: "flex",
@@ -136,7 +136,7 @@ const styles: Record<string, React.CSSProperties> = {
   hint: { marginTop: 10, fontSize: 14, color: "#64748b", textAlign: "center" },
 };
 
-export default function App() {
+export default function ColorGamePrototype() {
   const [mode, setMode] = useState("home");
   const [currentColor, setCurrentColor] = useState(COLORS[0]);
   const [currentCategory, setCurrentCategory] = useState(CATEGORIES[0]);
@@ -153,12 +153,12 @@ export default function App() {
 
   const nextPrompt = () => {
     if (mode === "objects") {
-      const nextObj = pickRandom(OBJECTS, currentObject);
+      const nextObj = pickRandom(OBJECTS, currentObject) || currentObject;
       setCurrentObject(nextObj);
       setShowAnswer(false);
     } else {
-      const nextColor = pickRandom(COLORS, currentColor);
-      const nextCategory = pickRandom(CATEGORIES, currentCategory);
+      const nextColor = pickRandom(COLORS, currentColor) || currentColor;
+      const nextCategory = pickRandom(CATEGORIES, currentCategory) || currentCategory;
       setCurrentColor(nextColor);
       setCurrentCategory(nextCategory);
     }
@@ -168,22 +168,22 @@ export default function App() {
   const startColors = () => {
     setMode("colors");
     setShowAnswer(false);
-    setCurrentColor(pickRandom(COLORS));
+    setCurrentColor(pickRandom(COLORS) || COLORS[0]);
     setAnimateKey((k) => k + 1);
   };
 
   const startCategories = () => {
     setMode("categories");
     setShowAnswer(false);
-    setCurrentColor(pickRandom(COLORS));
-    setCurrentCategory(pickRandom(CATEGORIES));
+    setCurrentColor(pickRandom(COLORS) || COLORS[0]);
+    setCurrentCategory(pickRandom(CATEGORIES) || CATEGORIES[0]);
     setAnimateKey((k) => k + 1);
   };
 
   const startObjects = () => {
     setMode("objects");
     setShowAnswer(false);
-    setCurrentObject(pickRandom(OBJECTS));
+    setCurrentObject(pickRandom(OBJECTS) || OBJECTS[0]);
     setAnimateKey((k) => k + 1);
   };
 
