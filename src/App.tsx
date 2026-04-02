@@ -46,6 +46,19 @@ const OBJECTS: ObjectOption[] = [
   { emoji: '🥕', color: 'Orange' },
 ];
 
+function speakLabel(label: string) {
+  if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+
+  window.speechSynthesis.cancel();
+
+  const utterance = new SpeechSynthesisUtterance(label);
+  utterance.lang = 'en-US';
+  utterance.rate = 0.9;
+  utterance.pitch = 1;
+
+  window.speechSynthesis.speak(utterance);
+}
+
 function pickRandom<T>(items: T[], avoid?: T): T | undefined {
   if (items.length === 0) return undefined;
   if (items.length === 1) return items[0];
@@ -184,16 +197,23 @@ export default function ColorGamePrototype() {
       const nextCategory = pickRandom(CATEGORIES, currentCategory) ?? currentCategory;
       setCurrentColor(nextColor);
       setCurrentCategory(nextCategory);
+
+      if (mode === 'colors') {
+        speakLabel(nextColor.name);
+      }
     }
 
     setAnimateKey((key) => key + 1);
   };
 
   const startColors = () => {
+    const nextColor = pickRandom(COLORS) ?? COLORS[0];
+
     setMode('colors');
     setShowAnswer(false);
-    setCurrentColor(pickRandom(COLORS) ?? COLORS[0]);
+    setCurrentColor(nextColor);
     setAnimateKey((key) => key + 1);
+    speakLabel(nextColor.name);
   };
 
   const startCategories = () => {
